@@ -1,0 +1,67 @@
+import { DNS_CLASS, DNS_TYPE } from "./index.js";
+import { DNSResult, makeDNSLabel } from "./util.js";
+
+export class DNSAnswer {
+    public name: string = "";
+    public type = DNS_TYPE.A;
+    public class = DNS_CLASS.IN;
+    public ttl = 0;
+    private data?: DNSResult;
+    private dataRaw?: Buffer;
+
+    public getTTL() {
+        return this.ttl >>> 0;
+    }
+
+    public setData(data: DNSResult) {
+        this.data = data;
+        if (typeof data === "string") {
+            if (this.type === DNS_TYPE.TXT) {
+                this.dataRaw = Buffer.from(data, "ascii");
+            } else {
+                this.dataRaw = makeDNSLabel(data);
+            }
+        } else {
+            this.dataRaw = data.toBuffer();
+        }
+    }
+
+    public getData() {
+        return this.data;
+    }
+
+    public getDataRaw() {
+        return this.dataRaw;
+    }
+
+    public getDataLen() {
+        return this.dataRaw ? this.dataRaw.byteLength : 0;
+    }
+
+    public write(packet: Buffer, pos: number) {
+        const nameLbL = makeDNSLabel(this.name);
+        for (let i = 0; i < nameLbL.byteLength; i++) {
+            packet[pos + i] = nameLbL[i];
+        }
+        pos += nameLbL.byteLength;
+
+        packet[pos++] = (this.type >>> 8) & 0xFF;
+        packet[pos++] = this.type & 0xFF;
+        packet[pos++] = (this.class >>> 8) & 0xFF;
+        packet[pos++] = this.class & 0xFF;
+
+        packet[pos++] = (this.ttl >>> 24) & 0xFF;
+        packet[pos++] = (this.ttl >>> 16) & 0xFF;
+        packet[pos++] = (this.ttl >>> 8) & 0xFF;
+        packet[pos++] = this.ttl & 0xFF;
+
+        if (this.dataRaw) {
+            for (let i = 0; i  < this.dataRaw.byteLength; i++) {
+                packet[pos + i] = this.dataRaw[i];
+            }
+            pos += this.dataRaw.byteLength;
+        }
+
+        return pos;
+    }
+}
