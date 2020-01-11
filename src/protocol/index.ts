@@ -147,9 +147,6 @@ export class DNSPacket {
     public toBuffer() {
         const packet = Buffer.alloc(this.getFullLength());
 
-        console.log(packet.length);
-        console.log(this.answers.length);
-
         packet[0] = (this.id >>> 8) & 0xFF;
         packet[1] = this.id & 0xFF;
         packet[2] = boolToBit(this.qr, 7) |

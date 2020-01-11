@@ -23,14 +23,13 @@ export class IPAddress {
         for (let i = 0; i < spls.length; i++) {
             const spl = spls[i];
             if (spl === '') {
-                const toFill = (16 - spls.length) * 2;
-                bufPos += toFill;
+                bufPos = 18 - ((spls.length - i) * 2);
                 continue;
             }
 
             const ipData = parseInt(spl, 16);
-            buf[bufPos] = ipData & 0xFF;
-            buf[bufPos + 1] = (ipData >>> 8) & 0xFF;
+            buf[bufPos + 1] = ipData & 0xFF;
+            buf[bufPos] = (ipData >>> 8) & 0xFF;
             bufPos += 2;
         }
         return new IPAddress(buf);
@@ -43,7 +42,7 @@ export class IPAddress {
 
         let ret = [];
         for (let i = 0; i < 16; i += 2) {
-            ret.push(`${this.data[i].toString(16)}${this.data[i+1].toString(16)}`);
+            ret.push(`${this.data[i+1].toString(16)}${this.data[i].toString(16)}`);
         }
         return ret.join(':');
     }
