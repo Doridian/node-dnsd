@@ -40,7 +40,12 @@ export class IPAddress {
         if (this.data.length === 4) {
             return `${this.data[0].toString(10)}.${this.data[1].toString(10)}.${this.data[2].toString(10)}.${this.data[3].toString(10)}`;
         }
-        // TODO: IPv6
+
+        let ret = [];
+        for (let i = 0; i < 16; i += 2) {
+            ret.push(`${this.data[i].toString(16)}${this.data[i+1].toString(16)}`);
+        }
+        return ret.join(':');
     }
 
     toBuffer() {

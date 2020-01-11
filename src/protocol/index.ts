@@ -85,13 +85,9 @@ export class DNSPacket {
         dns.rcode = rData & 0b1111;
 
         const qdcount = data[5] + (data[4] << 8);
-        const ancount = data[7] + (data[6] << 8);
-        const nscount = data[9] + (data[8] << 8);
-        const arcount = data[11] + (data[10] << 8);
-
-        if (ancount > 0 || nscount > 0 || arcount > 0) {
-            throw new Error("Query contains non-question sections");
-        }
+        //const ancount = data[7] + (data[6] << 8);
+        //const nscount = data[9] + (data[8] << 8);
+        //const arcount = data[11] + (data[10] << 8);
 
         dns.questions = [];
         const state = { pos: 12, data };
