@@ -1,4 +1,4 @@
-import { createSocket, Socket, RemoteInfo } from "dgram";
+import { createSocket, Socket, RemoteInfo, SocketType } from "dgram";
 import { DNSPacket, DNS_RCODE } from "./protocol";
 import { DNSAnswer } from "./protocol/answer";
 
@@ -7,7 +7,10 @@ export type DNSReplyFunc = (answers: DNSAnswer[], rcode?: DNS_RCODE) => void;
 export abstract class DNSServer {
     protected socket?: Socket;
 
-    constructor(private port: number) {
+    constructor(
+            private port: number,
+            private address?: string,
+            private family: SocketType = "udp4") {
 
     }
 
@@ -38,8 +41,8 @@ export abstract class DNSServer {
             this.socket.close();
         }
 
-        this.socket = createSocket("udp4");
-        this.socket.bind(this.port);
+        this.socket = createSocket(this.family);
+        this.socket.bind(this.port, this.address);
 
         this.socket.on("error", (err) => this.handleError(err));
         this.socket.on("listening", cb);
