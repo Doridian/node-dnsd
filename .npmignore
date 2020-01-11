@@ -1,5 +1,3 @@
-/test
-/examples
-/docs
-/TODO.md
-/Makefile
+/src
+/dist/simple.js
+/dist/test
