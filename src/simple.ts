@@ -1,7 +1,7 @@
-import { DNSServer, DNSReplyFunc } from ".";
+import { DNSServer, DNSReplyFunc } from "./server";
 import { DNSPacket, DNS_TYPE, DNS_CLASS } from "./protocol";
 import { DNSAnswer } from "./protocol/answer";
-import { IPAddress } from "./protocol/util";
+import { IPAddress } from "./protocol/ipaddr";
 
 export class DNSSimpleServer extends DNSServer {
     protected handle(packet: DNSPacket, reply: DNSReplyFunc): void {

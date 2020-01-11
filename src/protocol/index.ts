@@ -1,6 +1,7 @@
-import { DNSAnswer } from "./answer.js";
-import { DNSQuestion } from "./question.js";
-import { boolToBit, IDNSParseState } from "./util.js";
+import { DNSAnswer } from "./answer";
+import { DNSQuestion } from "./question";
+import { boolToBit } from "./util";
+import { IPAddress } from "./ipaddr";
 
 const DNS_SEG_PTR = 0b11000000;
 const DNS_SEG_MAX = 0b00111111;
@@ -25,6 +26,10 @@ export const enum DNS_RCODE {
     SERVFAIL = 2,
     NXDOMAIN = 3,
 }
+
+export type DNSResult = string | IPAddress;
+export interface IDNSParseState { pos: number; data: Buffer; }
+export type DNSCallback = (result: DNSResult) => void;
 
 function parseDNSLabel(s: IDNSParseState) {
     const res = [];

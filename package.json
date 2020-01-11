@@ -16,9 +16,7 @@
     "url": "git://github.com/Doridian/node-dnsd.git"
   },
   "main": "dist/index.js",
-  "dependencies": {
-    "ipaddr.js": "^1.9.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^13.1.4",
     "rimraf": "^3.0.0",
