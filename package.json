@@ -1,7 +1,7 @@
 {
   "name": "@doridian/dnsd",
   "description": "DNS server library for TypeScript",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Doridian <git@doridian.net>",
   "contributors": [
     "Mark Dietzer"
