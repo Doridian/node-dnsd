@@ -1,6 +1,8 @@
 import { createSocket, Socket, RemoteInfo } from "dgram";
-import { DNSPacket } from "./protocol";
+import { DNSPacket, DNS_RCODE } from "./protocol";
 import { DNSAnswer } from "./protocol/answer";
+
+export type DNSReplyFunc = (answers: DNSAnswer[], rcode?: DNS_RCODE) => void;
 
 export abstract class DNSServer {
     protected socket?: Socket;
@@ -12,15 +14,20 @@ export abstract class DNSServer {
     protected handleMessageInternal(msg: Buffer, rinfo: RemoteInfo) {
         const pkt = DNSPacket.fromBuffer(msg);
 
-        const reply = (answers: DNSAnswer[]) => {
+        const reply = (answers: DNSAnswer[], rcode: DNS_RCODE = DNS_RCODE.NOERROR) => {
             pkt.answers = answers;
+            pkt.qr = true;
+            pkt.ra = false;
+            pkt.aa = false;
+            pkt.tc = false;
+            pkt.rcode = rcode;
             this.socket!.send(pkt.toBuffer(), rinfo.port, rinfo.address);
         };
 
         this.handle(pkt, reply);
     }
 
-    protected abstract handle(packet: DNSPacket, reply: (answers: DNSAnswer[]) => void): void;
+    protected abstract handle(packet: DNSPacket, reply: DNSReplyFunc): void;
 
     protected handleError(err: Error) {
         console.error(err.stack || err);

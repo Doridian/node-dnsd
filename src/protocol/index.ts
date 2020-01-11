@@ -19,6 +19,13 @@ export const enum DNS_CLASS {
     IN = 0x0001,
 }
 
+export const enum DNS_RCODE {
+    NOERROR = 0,
+    FORMERR = 1,
+    SERVFAIL = 2,
+    NXDOMAIN = 3,
+}
+
 function parseDNSLabel(s: IDNSParseState) {
     const res = [];
     const donePointers = new Set<number>();
@@ -27,6 +34,7 @@ function parseDNSLabel(s: IDNSParseState) {
 
     while (s.pos < s.data.byteLength) {
         const segLen = s.data[s.pos++];
+
         if (segLen > DNS_SEG_MAX) {
             if ((segLen & DNS_SEG_PTR) !== DNS_SEG_PTR) {
                 throw new Error(`Invalid DNS segment length ${segLen}`);
@@ -79,6 +87,10 @@ export class DNSPacket {
             throw new Error("Answer received, not question");
         }
 
+        if (dns.opcode !== 0) {
+            throw new Error("This only supports OpCode 0");
+        }
+
         // [3]
         const rData = data[3];
         dns.ra = (rData & 0b10000000) !== 0;
@@ -89,7 +101,6 @@ export class DNSPacket {
         //const nscount = data[9] + (data[8] << 8);
         //const arcount = data[11] + (data[10] << 8);
 
-        dns.questions = [];
         const state = { pos: 12, data };
         for (let i = 0; i < qdcount; i++) {
             const q = new DNSQuestion();
@@ -99,10 +110,6 @@ export class DNSPacket {
             state.pos += 4;
             dns.questions.push(q);
         }
-
-        dns.answers = [];
-        dns.authority = [];
-        dns.additional = [];
 
         return dns;
     }
@@ -114,7 +121,7 @@ export class DNSPacket {
     public tc = false;
     public rd = true;
     public ra = false;
-    public rcode = 0;
+    public rcode: DNS_RCODE = 0;
     public questions: DNSQuestion[] = []; // QDCOUNT
     public answers: DNSAnswer[] = []; // ANCOUNT
     public authority: DNSAnswer[] = []; // NSCOUNT
@@ -139,6 +146,9 @@ export class DNSPacket {
 
     public toBuffer() {
         const packet = Buffer.alloc(this.getFullLength());
+
+        console.log(packet.length);
+        console.log(this.answers.length);
 
         packet[0] = (this.id >>> 8) & 0xFF;
         packet[1] = this.id & 0xFF;

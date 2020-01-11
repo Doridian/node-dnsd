@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "tslint -t verbose --project tsconfig.json",
     "build": "tsc --project .",
-    "start": "npm run build && node dist/index.js"
+    "start": "npm run build && node dist/simple.js"
   },
   "repository": {
     "type": "git",

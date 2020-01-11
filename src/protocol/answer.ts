@@ -16,10 +16,10 @@ export class DNSAnswer {
     public setData(data: DNSResult) {
         this.data = data;
         if (typeof data === "string") {
-            if (this.type === DNS_TYPE.TXT) {
-                this.dataRaw = Buffer.from(data, "ascii");
-            } else {
+            if (this.type === DNS_TYPE.CNAME || this.type === DNS_TYPE.NS) {
                 this.dataRaw = makeDNSLabel(data);
+            } else {
+                this.dataRaw = Buffer.from(data, "ascii");
             }
         } else {
             this.dataRaw = data.toBuffer();
@@ -54,6 +54,10 @@ export class DNSAnswer {
         packet[pos++] = (this.ttl >>> 16) & 0xFF;
         packet[pos++] = (this.ttl >>> 8) & 0xFF;
         packet[pos++] = this.ttl & 0xFF;
+
+        const dLen = this.getDataLen();
+        packet[pos++] = (dLen >>> 8) & 0xFF;
+        packet[pos++] = dLen & 0xFF;
 
         if (this.dataRaw) {
             for (let i = 0; i  < this.dataRaw.byteLength; i++) {
