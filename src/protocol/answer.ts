@@ -16,7 +16,7 @@ export class DNSAnswer {
     public setData(data: DNSResult) {
         this.data = data;
         if (typeof data === "string") {
-            if (this.type === DNS_TYPE.CNAME || this.type === DNS_TYPE.NS) {
+            if (this.type === DNS_TYPE.CNAME || this.type === DNS_TYPE.NS || this.type == DNS_TYPE.PTR) {
                 this.dataRaw = makeDNSLabel(data);
             } else {
                 this.dataRaw = Buffer.from(data, "ascii");
