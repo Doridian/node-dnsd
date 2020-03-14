@@ -34,6 +34,10 @@ export class DNSAnswer {
         return this.dataRaw;
     }
 
+    public setDataRaw(dataRaw: Buffer) {
+        this.dataRaw = dataRaw;
+    }
+
     public getDataLen() {
         return this.dataRaw ? this.dataRaw.byteLength : 0;
     }
