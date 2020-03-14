@@ -1,8 +1,8 @@
-import { DNSResult, DNS_CLASS, DNS_TYPE } from "./index";
-import { makeDNSLabel } from "./util";
+import { DNSResult, DNS_CLASS, DNS_TYPE } from './index';
+import { makeDNSLabel } from './util';
 
 export class DNSAnswer {
-    public name: string = "";
+    public name = '';
     public type = DNS_TYPE.A;
     public class = DNS_CLASS.IN;
     public ttl = 0;
@@ -15,15 +15,7 @@ export class DNSAnswer {
 
     public setData(data: DNSResult) {
         this.data = data;
-        if (typeof data === "string") {
-            if (this.type === DNS_TYPE.CNAME || this.type === DNS_TYPE.NS || this.type == DNS_TYPE.PTR) {
-                this.dataRaw = makeDNSLabel(data);
-            } else {
-                this.dataRaw = Buffer.from(data, "ascii");
-            }
-        } else {
-            this.dataRaw = data.toBuffer();
-        }
+        this.dataRaw = this.parseData(data);
     }
 
     public getData() {
@@ -71,5 +63,17 @@ export class DNSAnswer {
         }
 
         return pos;
+    }
+
+    private parseData(data: DNSResult) {
+        if (typeof data !== 'string') {
+            return data.toBuffer();
+        }
+
+        if (this.type === DNS_TYPE.CNAME || this.type === DNS_TYPE.NS || this.type === DNS_TYPE.PTR) {
+            return makeDNSLabel(data);
+        }
+
+        return Buffer.from(data, 'ascii');
     }
 }

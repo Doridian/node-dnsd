@@ -1,7 +1,7 @@
-import { DNSAnswer } from "./answer";
-import { DNSQuestion } from "./question";
-import { boolToBit } from "./util";
-import { IPAddress } from "./ipaddr";
+import { DNSAnswer } from './answer';
+import { DNSQuestion } from './question';
+import { boolToBit } from './util';
+import { IPAddress } from './ipaddr';
 
 const DNS_SEG_PTR = 0b11000000;
 const DNS_SEG_MAX = 0b00111111;
@@ -49,7 +49,7 @@ function parseDNSLabel(s: IDNSParseState) {
             }
             s.pos = ((segLen & DNS_SEG_MAX) << 8) | s.data[s.pos];
             if (donePointers.has(s.pos)) {
-                throw new Error("Recursive pointers detected");
+                throw new Error('Recursive pointers detected');
             }
             donePointers.add(s.pos);
             continue;
@@ -60,7 +60,7 @@ function parseDNSLabel(s: IDNSParseState) {
             break;
         }
 
-        res.push(s.data.slice(s.pos, s.pos + segLen).toString("ascii"));
+        res.push(s.data.slice(s.pos, s.pos + segLen).toString('ascii'));
         s.pos += segLen;
     }
 
@@ -69,10 +69,10 @@ function parseDNSLabel(s: IDNSParseState) {
     }
 
     if (!dataGood) {
-        throw new Error("Unexpected DNS label end");
+        throw new Error('Unexpected DNS label end');
     }
 
-    return res.join(".");
+    return res.join('.');
 }
 
 export class DNSPacket {
@@ -89,11 +89,11 @@ export class DNSPacket {
         dns.rd = (flagData & 0b1) !== 0;
 
         if (dns.qr) {
-            throw new Error("Answer received, not question");
+            throw new Error('Answer received, not question');
         }
 
         if (dns.opcode !== 0) {
-            throw new Error("This only supports OpCode 0");
+            throw new Error('This only supports OpCode 0');
         }
 
         // [3]
@@ -102,9 +102,9 @@ export class DNSPacket {
         dns.rcode = rData & 0b1111;
 
         const qdcount = data[5] + (data[4] << 8);
-        //const ancount = data[7] + (data[6] << 8);
-        //const nscount = data[9] + (data[8] << 8);
-        //const arcount = data[11] + (data[10] << 8);
+        // const ancount = data[7] + (data[6] << 8);
+        // const nscount = data[9] + (data[8] << 8);
+        // const arcount = data[11] + (data[10] << 8);
 
         const state = { pos: 12, data };
         for (let i = 0; i < qdcount; i++) {
@@ -134,16 +134,16 @@ export class DNSPacket {
 
     public getFullLength() {
         let len = 12;
-        this.questions.forEach((q) => {
+        this.questions.forEach(q => {
             len += (q.name.length + 2) + 4;
         });
-        this.answers.forEach((a) => {
+        this.answers.forEach(a => {
             len += (a.name.length + 2) + 10 + a.getDataLen();
         });
-        this.authority.forEach((a) => {
+        this.authority.forEach(a => {
             len += (a.name.length + 2) + 10 + a.getDataLen();
         });
-        this.additional.forEach((a) => {
+        this.additional.forEach(a => {
             len += (a.name.length + 2) + 10 + a.getDataLen();
         });
         return len;

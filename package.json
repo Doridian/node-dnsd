@@ -1,13 +1,14 @@
 {
   "name": "@doridian/dnsd",
   "description": "DNS server library for TypeScript",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "author": "Doridian <git@doridian.net>",
   "contributors": [
     "Mark Dietzer"
   ],
   "scripts": {
     "lint": "tslint -t verbose --project tsconfig.json",
+    "fmt": "tslint -t verbose --project tsconfig.json --fix",
     "build": "rimraf ./dist && tsc --project .",
     "start": "npm run build && node dist/simple.js"
   },
@@ -18,11 +19,11 @@
   "main": "dist/index.js",
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^13.1.4",
-    "rimraf": "^3.0.0",
-    "ts-node": "^8.5.4",
-    "tslint": "^5.20.1",
-    "typescript": "^3.7.4"
+    "@types/node": "^13.9.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^8.6.2",
+    "tslint": "^6.1.0",
+    "typescript": "^3.8.3"
   },
   "license": "MIT"
 }

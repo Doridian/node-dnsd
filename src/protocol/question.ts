@@ -1,8 +1,8 @@
-import { DNS_CLASS, DNS_TYPE } from "./index";
-import { makeDNSLabel } from "./util";
+import { DNS_CLASS, DNS_TYPE } from './index';
+import { makeDNSLabel } from './util';
 
 export class DNSQuestion {
-    public name: string = "";
+    public name = '';
     public type = DNS_TYPE.A;
     public class = DNS_CLASS.IN;
 
